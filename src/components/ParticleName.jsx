@@ -133,7 +133,7 @@ export default function ParticleName({
       const pos = geometry.attributes.position.array
       const disp = displacement * 0.02
       const mouseWorld = getMouseWorld()
-      const repelRadius = 2.5
+      const repelRadius = 1.4
       const repelStrength = 2.5
       const t = time
 
