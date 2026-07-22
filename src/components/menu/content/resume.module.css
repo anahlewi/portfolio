@@ -1,0 +1,104 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.subheading {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+/* ── Experience ── */
+.timeline {
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.timelineItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.timelineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.timelineHeader p:first-child {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.period {
+  opacity: 0.55;
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+.location {
+  opacity: 0.5;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.bullets {
+  margin: 0.4rem 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* ── Skills ── */
+.skillsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  padding-left: 1.5rem;
+}
+
+.skillRow {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.skillCat {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  opacity: 0.65;
+  padding-top: 0.2rem;
+}
+
+.skillVal {
+  opacity: 0.85;
+}
+
+/* ── Education ── */
+.educationBlock {
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.educationBlock p:first-child {
+  font-weight: bold;
+  font-size: 0.9rem;
+}

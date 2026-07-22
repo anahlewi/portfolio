@@ -1,0 +1,5 @@
+.children {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  line-height: 1.8;
+}

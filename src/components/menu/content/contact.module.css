@@ -1,0 +1,89 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  max-width: 560px;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.links a {
+  color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  display: block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  opacity: 0.55;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.08em;
+}
+
+.input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  outline: none;
+  letter-spacing: 0.04em;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.textarea {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.95rem;
+  padding: 0.6rem;
+  outline: none;
+  letter-spacing: 0.04em;
+  resize: none;
+}
+
+.textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.submit {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.9rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+}
+
+.confirm {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  line-height: 1.8;
+}

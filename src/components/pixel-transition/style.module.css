@@ -1,0 +1,34 @@
+.pixelBackground {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+}
+
+.pixelBackgroundContained {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.column {
+    width: 5vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.block {
+    width: 100%;
+    height: 5vw;
+    background: linear-gradient(160deg, #c8a020 0%, #b8882a 35%, #c45890 100%);
+    background-attachment: fixed;
+}
