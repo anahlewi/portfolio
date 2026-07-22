@@ -1,12 +1,8 @@
-import { useRef } from 'react'
 import styles from './LandingPage.module.css'
 import NavMenu from './menu'
-import Bio from './menu/content/bio'
-import PixelTransition from './pixel-transition'
+import ParticleName from './ParticleName'
 
-export default function LandingPage({ showBio, bioOpenKey, hidden, bioTransitioning, onOpen, onCloseBio }) {
-  const centerRef = useRef(null)
-
+export default function LandingPage({ hidden, onOpen }) {
   return (
     <>
       <svg className={styles.svgHidden}>
@@ -21,12 +17,8 @@ export default function LandingPage({ showBio, bioOpenKey, hidden, bioTransition
       </svg>
 
       <div className={styles.page} style={{ visibility: hidden ? 'hidden' : 'visible' }}>
-        <div ref={centerRef} className={styles.center}>
-          <PixelTransition menuIsActive={bioTransitioning} contained containerRef={centerRef} />
-          {showBio
-            ? <Bio onCloseBio={onCloseBio} openKey={bioOpenKey} />
-            : <h1 className="pixel-title">anah lewi</h1>
-          }
+        <div className={styles.center}>
+          <ParticleName text="anah lewi" />
         </div>
         <NavMenu onOpen={onOpen} />
       </div>

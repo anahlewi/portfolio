@@ -14,8 +14,13 @@ export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
 
+  const CONTACT_EMAIL = 'anahlewi@gmail.com'
+
   const handleSubmit = (e) => {
     e.preventDefault()
+    const subject = `Portfolio contact from ${form.name || 'someone'}`
+    const body = `${form.message}\n\n— ${form.name} (${form.email})`
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     setSent(true)
   }
 
@@ -28,14 +33,14 @@ export default function Contact() {
     <div className={styles.wrapper}>
 
       <motion.div variants={slideIn(0)} initial="hidden" animate="visible" className={styles.links}>
-        <p>email — <a href="mailto:you@example.com">you@example.com</a></p>
-        <p>linkedin — <a href="#">linkedin.com/in/yourname</a></p>
-        <p>github — <a href="#">github.com/yourhandle</a></p>
+        <p>email — <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+        <p>linkedin — <a href="https://www.linkedin.com/in/anahlewi/" target="_blank" rel="noopener noreferrer">linkedin.com/in/anahlewi</a></p>
+        <p>github — <a href="https://github.com/anahlewi" target="_blank" rel="noopener noreferrer">github.com/anahlewi</a></p>
       </motion.div>
 
       {sent ? (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={styles.confirm}>
-          message received —<br />i'll be in touch.
+          opening your email client —<br />send it over and i'll be in touch.
         </motion.p>
       ) : (
         <form onSubmit={handleSubmit} className={styles.form}>

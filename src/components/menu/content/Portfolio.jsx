@@ -33,7 +33,7 @@ const projects = [
     num: '05',
     title: 'Personal Website Terminal',
     tag: 'React · TypeScript',
-    url: 'https://anahlewi.github.io/personal-website-term/',
+    url: 'https://anahlewi.github.io/anahesty-terminal/',
     desc: 'Interactive portfolio as a browser-based terminal with custom commands and keyboard navigation. 2,000+ unique visitors.',
   },
   {
