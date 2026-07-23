@@ -43,6 +43,8 @@ export default function PixelTransition({ menuIsActive, contained = false, conta
     nbOfBlocks = Math.ceil(window.innerHeight / blockSize)
   }
 
+  if (!blockSize) return null
+
   return (
     <div className={contained ? styles.pixelBackgroundContained : styles.pixelBackground}>
       {[...Array(cols)].map((_, i) => (

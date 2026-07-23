@@ -2,9 +2,9 @@ import { useEffect } from 'react'
 import styles from './PixelModal.module.css'
 import Typewriter from './Typewriter'
 
-const GRADIENT = 'linear-gradient(160deg, #c8a020 0%, #b8882a 35%, #c45890 100%)'
+const BG_COLOR = '#000000'
 
-export default function PixelModal({ title, children, onClose }) {
+export default function PixelModal({ children, onClose }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
@@ -17,10 +17,9 @@ export default function PixelModal({ title, children, onClose }) {
   }, [onClose])
 
   return (
-    <div className="modal-backdrop" style={{ background: GRADIENT }}>
+    <div className="modal-backdrop" style={{ background: BG_COLOR }}>
       <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>[ close ]</button>
-        <Typewriter text={title} speed={90} header delay={900} />
+        <button className="modal-close" onClick={onClose}>close</button>
         <div className={styles.children}>{children}</div>
       </div>
     </div>

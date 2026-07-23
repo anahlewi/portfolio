@@ -29,6 +29,6 @@
 .block {
     width: 100%;
     height: 5vw;
-    background: linear-gradient(160deg, #c8a020 0%, #b8882a 35%, #c45890 100%);
+    background: #000000;
     background-attachment: fixed;
 }
