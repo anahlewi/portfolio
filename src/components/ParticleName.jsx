@@ -1,6 +1,83 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 
+const PEARL_TINTS = [
+  [1.0, 0.98, 0.94],   // warm cream
+  [1.0, 0.93, 0.95],   // blush pink
+  [0.93, 0.96, 1.0],   // pale blue
+  [0.96, 0.93, 1.0],   // lavender
+  [1.0, 0.97, 0.85],   // pale gold
+  [1.0, 1.0, 1.0],     // white
+]
+
+function createPearlTexture(size = 128) {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')
+  const cx = size / 2
+  const cy = size / 2
+  const r = size / 2
+
+  const body = ctx.createRadialGradient(
+    cx - r * 0.3, cy - r * 0.3, r * 0.05,
+    cx, cy, r
+  )
+  body.addColorStop(0, 'rgba(255,255,255,1)')
+  body.addColorStop(0.35, 'rgba(255,250,247,0.95)')
+  body.addColorStop(0.6, 'rgba(232,225,222,0.8)')
+  body.addColorStop(0.85, 'rgba(190,182,185,0.4)')
+  body.addColorStop(1, 'rgba(190,182,185,0)')
+  ctx.fillStyle = body
+  ctx.beginPath()
+  ctx.arc(cx, cy, r, 0, Math.PI * 2)
+  ctx.fill()
+
+  const highlight = ctx.createRadialGradient(
+    cx - r * 0.38, cy - r * 0.42, 0,
+    cx - r * 0.38, cy - r * 0.42, r * 0.3
+  )
+  highlight.addColorStop(0, 'rgba(255,255,255,0.95)')
+  highlight.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = highlight
+  ctx.beginPath()
+  ctx.arc(cx - r * 0.38, cy - r * 0.42, r * 0.3, 0, Math.PI * 2)
+  ctx.fill()
+
+  return canvas
+}
+
+const VERTEX_SHADER = `
+  attribute vec3 aColor;
+  attribute float aScale;
+  attribute float aPhase;
+  uniform float uSize;
+  uniform float uPixelScale;
+  uniform float uTime;
+  varying vec3 vColor;
+  varying float vShimmer;
+  void main() {
+    vColor = aColor;
+    vShimmer = 0.75 + 0.25 * sin(uTime * 1.6 + aPhase * 3.0);
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = uSize * aScale * (uPixelScale / -mvPosition.z);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`
+
+const FRAGMENT_SHADER = `
+  uniform sampler2D map;
+  uniform vec3 uTint;
+  varying vec3 vColor;
+  varying float vShimmer;
+  void main() {
+    vec4 tex = texture2D(map, gl_PointCoord);
+    if (tex.a < 0.02) discard;
+    vec3 rgb = tex.rgb * vColor * uTint * vShimmer;
+    gl_FragColor = vec4(rgb, tex.a);
+  }
+`
+
 export default function ParticleName({
   text = 'anah lewi',
   particleSize = 5,
@@ -58,10 +135,22 @@ export default function ParticleName({
     const count = positions.length / 3
     const basePositions = new Float32Array(positions)
     const offsets = new Float32Array(count * 3)
+    const colors = new Float32Array(count * 3)
+    const scales = new Float32Array(count)
+    const phases = new Float32Array(count)
     for (let i = 0; i < count; i++) {
       offsets[i * 3] = Math.random() * Math.PI * 2
       offsets[i * 3 + 1] = Math.random() * Math.PI * 2
       offsets[i * 3 + 2] = Math.random() * Math.PI * 2
+
+      const tint = PEARL_TINTS[(Math.random() * PEARL_TINTS.length) | 0]
+      const jitter = 0.9 + Math.random() * 0.1
+      colors[i * 3] = tint[0] * jitter
+      colors[i * 3 + 1] = tint[1] * jitter
+      colors[i * 3 + 2] = tint[2] * jitter
+
+      scales[i] = 0.75 + Math.random() * 0.6
+      phases[i] = Math.random() * Math.PI * 2
     }
 
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
@@ -91,12 +180,35 @@ export default function ParticleName({
 
     const geometry = new THREE.BufferGeometry()
     geometry.setAttribute('position', new THREE.BufferAttribute(posAttr, 3))
+    geometry.setAttribute('aColor', new THREE.BufferAttribute(colors, 3))
+    geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
+    geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1))
 
-    const material = new THREE.PointsMaterial({
-      color: new THREE.Color(color),
-      size: particleSize * 0.03,
-      sizeAttenuation: true,
+    const pearlTexture = new THREE.CanvasTexture(createPearlTexture())
+    pearlTexture.minFilter = THREE.LinearFilter
+    pearlTexture.magFilter = THREE.LinearFilter
+
+    const baseColor = new THREE.Color(color)
+
+    const updatePixelScale = () => {
+      material.uniforms.uPixelScale.value = height * 0.5
+    }
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        map: { value: pearlTexture },
+        uSize: { value: particleSize * 0.045 },
+        uPixelScale: { value: 1 },
+        uTime: { value: 0 },
+        uTint: { value: baseColor },
+      },
+      vertexShader: VERTEX_SHADER,
+      fragmentShader: FRAGMENT_SHADER,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
     })
+    updatePixelScale()
 
     const points = new THREE.Points(geometry, material)
     scene.add(points)
@@ -129,6 +241,8 @@ export default function ParticleName({
       const dt = now - lastTimestamp
       lastTimestamp = now
       time += dt * 0.001 * speed
+
+      material.uniforms.uTime.value = time
 
       const pos = geometry.attributes.position.array
       const disp = displacement * 0.02
@@ -193,6 +307,7 @@ export default function ParticleName({
       fitCamera()
       camera.updateProjectionMatrix()
       renderer.setSize(width, height)
+      updatePixelScale()
     }
     const resizeObserver = new ResizeObserver(handleResize)
     resizeObserver.observe(container)
@@ -203,6 +318,7 @@ export default function ParticleName({
       container.removeEventListener('mousemove', handleMouseMove)
       geometry.dispose()
       material.dispose()
+      pearlTexture.dispose()
       renderer.dispose()
       container.removeChild(canvas)
     }
