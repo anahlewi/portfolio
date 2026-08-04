@@ -221,7 +221,12 @@ export default function ParticleName({
     audio.volume = 0
     audio.preload = 'auto'
     let currentVolume = 0
-    let audioStarted = false
+
+    const unlockAudio = () => {
+      audio.play().catch(() => {})
+    }
+    window.addEventListener('pointerdown', unlockAudio, { once: true })
+    window.addEventListener('keydown', unlockAudio, { once: true })
 
     let mouseX = width / 2
     let mouseY = height / 2
@@ -314,18 +319,13 @@ export default function ParticleName({
       }
       geometry.attributes.position.needsUpdate = true
 
-      if (Math.random() < 0.02) console.log('DEBUG', { count, engagedCount, currentVolume })
-      const targetVolume = (engagedCount / Math.max(count * 0.12, 1)) * MAX_VOLUME
-      const clampedTarget = Math.min(targetVolume, MAX_VOLUME)
+      const targetVolume = Math.min(engagedCount / (count * 0.1), 1) * MAX_VOLUME
       const smoothing = 1 - Math.exp(-dt * 0.006)
-      currentVolume += (clampedTarget - currentVolume) * smoothing
+      currentVolume += (targetVolume - currentVolume) * smoothing
       if (currentVolume > 0.002) {
-        if (!audioStarted) {
-          audioStarted = true
-          audio.play().catch(() => {})
-        }
+        if (audio.paused) audio.play().catch(() => {})
         audio.volume = Math.min(currentVolume, 1)
-      } else if (audioStarted) {
+      } else {
         audio.volume = 0
       }
 
@@ -350,6 +350,8 @@ export default function ParticleName({
       resizeObserver.disconnect()
       container.removeEventListener('mousemove', handleMouseMove)
       container.removeEventListener('mouseleave', handleMouseLeave)
+      window.removeEventListener('pointerdown', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
       audio.pause()
       audio.src = ''
       geometry.dispose()
