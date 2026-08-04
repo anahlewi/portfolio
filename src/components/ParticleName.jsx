@@ -47,6 +47,9 @@ function createPearlTexture(size = 128) {
   return canvas
 }
 
+const SOUND_SRC = '/sounds/pearls-rubbing.mp3'
+const MAX_VOLUME = 0.35
+
 const VERTEX_SHADER = `
   attribute vec3 aColor;
   attribute float aScale;
@@ -213,14 +216,27 @@ export default function ParticleName({
     const points = new THREE.Points(geometry, material)
     scene.add(points)
 
+    const audio = new Audio(SOUND_SRC)
+    audio.loop = true
+    audio.volume = 0
+    audio.preload = 'auto'
+    let currentVolume = 0
+    let audioStarted = false
+
     let mouseX = width / 2
     let mouseY = height / 2
+    let mouseActive = false
     const handleMouseMove = (e) => {
       const rect = canvas.getBoundingClientRect()
       mouseX = e.clientX - rect.left
       mouseY = e.clientY - rect.top
+      mouseActive = true
+    }
+    const handleMouseLeave = () => {
+      mouseActive = false
     }
     container.addEventListener('mousemove', handleMouseMove)
+    container.addEventListener('mouseleave', handleMouseLeave)
 
     const getMouseWorld = () => {
       const ndcX = (mouseX / width) * 2 - 1
@@ -250,6 +266,7 @@ export default function ParticleName({
       const repelRadius = 1.4
       const repelStrength = 2.5
       const t = time
+      let engagedCount = 0
 
       for (let i = 0; i < count; i++) {
         const i3 = i * 3
@@ -264,7 +281,7 @@ export default function ParticleName({
         const dy = py - mouseWorld.y
         const dist = Math.sqrt(dx * dx + dy * dy)
 
-        if (dist < repelRadius * 1.5 && dist > 0.0001) {
+        if (mouseActive && dist < repelRadius * 1.5 && dist > 0.0001) {
           const angle = Math.atan2(dy, dx)
           const noise =
             Math.sin(angle * 3 + ox * 2 + t * 0.7) * 0.35 +
@@ -273,6 +290,7 @@ export default function ParticleName({
           const effectiveRadius = repelRadius * (1 + noise)
 
           if (dist < effectiveRadius) {
+            engagedCount++
             const n = 1 - dist / effectiveRadius
             const falloff = n * n
             const strength = repelStrength * (0.7 + 0.6 * Math.sin(ox + oy))
@@ -296,6 +314,21 @@ export default function ParticleName({
       }
       geometry.attributes.position.needsUpdate = true
 
+      if (Math.random() < 0.02) console.log('DEBUG', { count, engagedCount, currentVolume })
+      const targetVolume = (engagedCount / Math.max(count * 0.12, 1)) * MAX_VOLUME
+      const clampedTarget = Math.min(targetVolume, MAX_VOLUME)
+      const smoothing = 1 - Math.exp(-dt * 0.006)
+      currentVolume += (clampedTarget - currentVolume) * smoothing
+      if (currentVolume > 0.002) {
+        if (!audioStarted) {
+          audioStarted = true
+          audio.play().catch(() => {})
+        }
+        audio.volume = Math.min(currentVolume, 1)
+      } else if (audioStarted) {
+        audio.volume = 0
+      }
+
       renderer.render(scene, camera)
     }
     rafId = requestAnimationFrame(animate)
@@ -316,6 +349,9 @@ export default function ParticleName({
       cancelAnimationFrame(rafId)
       resizeObserver.disconnect()
       container.removeEventListener('mousemove', handleMouseMove)
+      container.removeEventListener('mouseleave', handleMouseLeave)
+      audio.pause()
+      audio.src = ''
       geometry.dispose()
       material.dispose()
       pearlTexture.dispose()
