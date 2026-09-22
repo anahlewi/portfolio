@@ -1,0 +1,357 @@
+.root {
+  min-height: 100vh;
+}
+
+/* ── Hero ── */
+.hero {
+  background: #000000;
+  padding: clamp(2.5rem, 6vw, 5.5rem) clamp(1.5rem, 6vw, 5.5rem) clamp(3rem, 7vw, 6rem);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.name {
+  margin: 0;
+  font-family: 'Press Start 2P', 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(2rem, 4.2vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.introRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+.portrait {
+  flex: 1 1 380px;
+  max-width: 580px;
+  aspect-ratio: 3 / 2;
+  border-radius: 20px;
+  background: #d6ecac;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portraitPlaceholder {
+  width: 25%;
+  max-width: 72px;
+  color: rgba(20, 23, 15, 0.25);
+}
+
+.introText {
+  flex: 1 1 300px;
+  font-family: 'Space Mono', monospace;;
+  max-width: 420px;
+  padding-top: clamp(0.25rem, 1vw, 0.75rem);
+}
+
+.introHeading {
+  margin: 0 0 1rem;
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.introParagraph {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  line-height: 1.6;
+  color:white;
+}
+
+/* ── Shared section heading ── */
+.sectionHeading {
+  margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+  font-family: 'Press Start 2P', 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1.35rem, 2.4vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #000000;
+}
+
+/* ── Portfolio ── */
+.portfolio {
+  background: #ffffff;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 6vw, 5.5rem);
+}
+
+.portfolioGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+/* Blocks grid: first block spans all 3 rows in column 1,
+   the rest stack in column 2 — mirrors a tall block beside
+   stacked shorter ones. */
+.blocks {
+  flex: 2 1 480px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  grid-template-rows: repeat(3, minmax(90px, 1fr));
+  gap: 10px;
+  height: clamp(320px, 36vw, 460px);
+}
+
+.block {
+  position: relative;
+  display: block;
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.block:hover,
+.block:focus-visible {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.block[data-block='1'] {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+}
+
+.block[data-block='2'] {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.block[data-block='3'] {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.block[data-block='4'] {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.blockNumber {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.portfolioInfo {
+  flex: 1 1 260px;
+  max-width: 360px;
+}
+
+.featuredHeading {
+  margin: 0 0 1.75rem;
+  font-family: 'Press Start 2P', 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: #000000;
+}
+
+.featuredList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(0.85rem, 1.3vw, 0.95rem);
+}
+
+.featuredIndex {
+  color: #000000;
+  margin-right: 0.5rem;
+}
+
+.featuredLink {
+  color: #000000;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.featuredLink:hover {
+  opacity: 0.6;
+}
+
+.featuredTag {
+  color: #9a9d94;
+}
+
+@media (max-width: 640px) {
+  .blocks {
+    height: clamp(360px, 90vw, 440px);
+  }
+}
+
+/* ── History ── */
+.history {
+  background: #ffffff;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 6vw, 5.5rem);
+}
+
+.historyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.experienceRow {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+  border-bottom: 1px solid #e7e7e0;
+}
+
+.experienceRow:last-child {
+  border-bottom: none;
+}
+
+.experienceRowReverse {
+  flex-direction: row-reverse;
+}
+
+.experienceText {
+  flex: 1 1 320px;
+}
+
+.experienceName {
+  margin: 0 0 0.75rem;
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #000000;
+}
+
+.experienceDescription {
+  margin: 0 0 0.75rem;
+  max-width: 460px;
+  font-size: clamp(0.9rem, 1.3vw, 1rem);
+  font-family: 'Space Mono', monospace;
+  line-height: 1.6;
+  color: #3d3f38;
+}
+
+.experienceMeta {
+  margin: 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #9a9d94;
+}
+
+.experienceVisual {
+  flex: 1 1 280px;
+  max-width: 420px;
+  aspect-ratio: 16 / 10;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.experienceLogoImg {
+  width: 40%;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.experienceCycleImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  animation: experience-cycle-fade 0.6s ease;
+}
+
+@keyframes experience-cycle-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experienceCycleImg {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .introRow {
+    flex-direction: column;
+  }
+
+  .portrait {
+    flex-basis: auto;
+    width: 100%;
+    max-width: none;
+  }
+
+  .experienceRow,
+  .experienceRowReverse {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .experienceVisual {
+    max-width: none;
+  }
+}
+
+/* ── Contact ── */
+.contact {
+  background: #000000;
+  padding: clamp(3.5rem, 9vw, 6.5rem) clamp(1.5rem, 6vw, 5.5rem);
+  text-align: center;
+}
+
+.contactHeading {
+  margin: 0 0 1.5rem;
+  font-family: 'Press Start 2P', 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1.1rem, 2.8vw, 1.75rem);
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.contactEmail {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  color: #ffffff;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.contactEmail:hover {
+  opacity: 0.6;
+}
