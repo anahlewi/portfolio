@@ -75,6 +75,7 @@ const CASE_STUDIES = [
     client: 'Square',
     summary: 'Designing and building reporting for Square organizations across iOS and web.',
     stack: 'iOS, Web, Prototyping',
+    url: 'https://work-in-progress-blog.vercel.app/notes/case-study-square-organizations',
     color: '#f5c84c',
     shade: '#c99a1e',
   },
@@ -84,6 +85,7 @@ const CASE_STUDIES = [
     year: '2025',
     summary: 'An interactive, fully functional custom wedding site built with brand designer Seka Seluga and UI/UX designer Anika Shields.',
     stack: 'React, Interaction design',
+    url: 'https://work-in-progress-blog.vercel.app/notes/case-study-wedding-website',
     color: '#ffb37a',
     shade: '#d97b45',
   },
@@ -176,16 +178,22 @@ function CaseStudies() {
 
       {study && (
         <div id="case-study-panel" className={styles.casePanel} role="region" aria-label={study.title}>
-          <p className={styles.experienceMeta}>
+          <p className={styles.caseClient}>
             {study.client}
             {study.year && ` · ${study.year}`}
           </p>
           <h3 className={styles.experienceName}>{study.title}</h3>
-          <p className={styles.experienceDescription}>{study.summary}</p>
-          <p className={styles.featuredTag}>{study.stack}</p>
+          <p className={styles.caseSummary}>{study.summary}</p>
+          <p className={styles.caseStack}>{study.stack}</p>
           {study.url && (
-            <a className={styles.featuredLink} href={study.url} target="_blank" rel="noreferrer">
-              Read the case study
+            <a
+              className={styles.caseLink}
+              href={study.url}
+              target="_blank"
+              rel="noreferrer"
+              style={{ '--accent': study.color }}
+            >
+              Read the case study <span aria-hidden="true">→</span>
               <span className={styles.srOnly}> (opens in a new tab)</span>
             </a>
           )}
