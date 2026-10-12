@@ -2,6 +2,15 @@
   min-height: 100vh;
 }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* ── Hero ── */
 .hero {
   background: #000000;
@@ -204,7 +213,7 @@
 }
 
 .featuredTag {
-  color: #9a9d94;
+  color: #6b6e66;
 }
 
 @media (max-width: 640px) {
@@ -267,10 +276,11 @@
   margin: 0;
   font-size: 0.8rem;
   font-style: italic;
-  color: #9a9d94;
+  color: #6b6e66;
 }
 
 .experienceVisual {
+  position: relative;
   flex: 1 1 280px;
   max-width: 420px;
   aspect-ratio: 16 / 10;
@@ -279,6 +289,34 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.cycleToggle {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #000000;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: 3px 3px 0 #000000;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: #000000;
+  cursor: pointer;
+}
+
+.cycleToggle:hover {
+  background: #eae7e7;
+}
+
+.cycleToggle:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 3px;
 }
 
 .experienceLogoImg {
@@ -325,6 +363,85 @@
 
   .experienceVisual {
     max-width: none;
+  }
+}
+
+/* ── Case Studies ── */
+.caseStudies {
+  background: #eae7e7;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 6vw, 5.5rem);
+}
+
+.folderGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.folder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 128px;
+  padding: 0.5rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.folderIcon {
+  width: 96px;
+  height: 84px;
+  transition: transform 0.15s ease;
+}
+
+.folder:hover .folderIcon {
+  transform: translateY(-3px);
+}
+
+.folderLabel {
+  padding: 2px 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  text-align: center;
+  color: #000000;
+}
+
+.folder[aria-expanded='true'] .folderLabel,
+.folder:focus-visible .folderLabel {
+  background: #000000;
+  color: #ffffff;
+}
+
+.folder:focus-visible {
+  outline: 1px dotted #000000;
+}
+
+.casePanel {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  max-width: 640px;
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 6px 6px 0 #000000;
+  animation: experience-cycle-fade 0.3s ease;
+}
+
+.casePanel .experienceMeta {
+  margin-bottom: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folderIcon,
+  .casePanel {
+    transition: none;
+    animation: none;
   }
 }
 
