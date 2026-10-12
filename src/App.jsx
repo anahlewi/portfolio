@@ -122,13 +122,38 @@ function FolderIcon({ open, color, shade }) {
   )
 }
 
+function CollapsibleSection({ id, title, className, children }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <section className={`${className} ${open ? '' : styles.sectionClosed}`} aria-labelledby={`${id}-heading`}>
+      <h2 className={styles.featuredHeading} id={`${id}-heading`}>
+        <button
+          type="button"
+          className={styles.sectionToggle}
+          aria-expanded={open}
+          aria-controls={`${id}-content`}
+          onClick={() => setOpen((o) => !o)}
+        >
+          {title}
+          <span className={styles.sectionToggleIcon} aria-hidden="true">
+            {open ? '-' : '+'}
+          </span>
+        </button>
+      </h2>
+      <div id={`${id}-content`} className={styles.collapsible} inert={open ? undefined : ''}>
+        <div className={styles.collapsibleInner}>{children}</div>
+      </div>
+    </section>
+  )
+}
+
 function CaseStudies() {
   const [openIndex, setOpenIndex] = useState(null)
   const study = openIndex === null ? null : CASE_STUDIES[openIndex]
 
   return (
-    <section className={styles.caseStudies}>
-      <h2 className={styles.featuredHeading}>Case Studies</h2>
+    <CollapsibleSection id="case-studies" title="Case Studies" className={styles.caseStudies}>
       <ul className={styles.folderGrid}>
         {CASE_STUDIES.map((s, i) => {
           const open = openIndex === i
@@ -166,7 +191,7 @@ function CaseStudies() {
           )}
         </div>
       )}
-    </section>
+    </CollapsibleSection>
   )
 }
 
@@ -248,8 +273,11 @@ export default function App() {
         <div className={styles.introRow}>
           <div className={styles.portrait}>
             <img
-              src="https://tyajqainwjvxmehbptzh.supabase.co/storage/v1/object/public/media/IMG_1724.gif"
+              src="/portrait.gif"
               alt="Animated line drawing of a figure dancing on a ringed planet."
+              width="1200"
+              height="1198"
+              fetchpriority="high"
               className={styles.portraitImg}
             />
             {/* <svg className={styles.portraitPlaceholder} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -271,13 +299,12 @@ export default function App() {
 
       <CaseStudies />
 
-      <section className={styles.history}>
-        <h2 className={styles.featuredHeading}>EXPERIENCE</h2>
+      <CollapsibleSection id="experience" title="Experience" className={styles.history}>
         <ul className={styles.historyList}>
-          {HISTORY.map((role, i) => (
+          {HISTORY.map((role) => (
             <li
               key={role.name}
-              className={`${styles.experienceRow} ${i % 2 === 1 ? styles.experienceRowReverse : ''}`}
+              className={styles.experienceRow}
             >
               <div className={styles.experienceText}>
                 <h3 className={styles.experienceName}>{role.name}</h3>
@@ -296,7 +323,7 @@ export default function App() {
             </li>
           ))}
         </ul>
-      </section>
+      </CollapsibleSection>
 
       <section className={styles.portfolio}>
         <div className={styles.portfolioGrid}>
