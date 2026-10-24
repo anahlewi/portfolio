@@ -181,18 +181,125 @@
 
 .block {
   position: relative;
-  display: block;
   border-radius: 4px;
-  overflow: hidden;
+  /* clip, not hidden: embedded sites can't scroll a clip box (the terminal scrolls to its cursor). */
+  overflow: clip;
   text-decoration: none;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  container-type: size;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.block:hover,
-.block:focus-visible {
-  filter: brightness(1.08);
-  transform: translateY(-2px);
-  outline: none;
+/* Hover gradient lives on a layer so it can fade — gradients themselves don't transition. */
+.block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(123deg, rgb(0 0 0), rgb(51 57 57));
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+
+/* Site frame glides in from the bottom-right, along the gradient's diagonal,
+   and settles centered inside the block — sized to fit whichever side is tighter. */
+.blockFrame {
+  --pad: max(14px, 9cqmin);
+  --bar: 18px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100cqw - 2 * var(--pad), (100cqh - 2 * var(--pad) - var(--bar)) * 1.6);
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #1a1d1d;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.5);
+  opacity: 0;
+  transform: translate(calc(-50% + 50cqmin), calc(-50% + 50cqmin));
+  transition: transform 0.7s var(--ease), opacity 0.5s var(--ease);
+}
+
+.blockFrameBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--bar);
+  padding: 0 8px;
+  background: #2a2e2e;
+}
+
+.blockFrameBar i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.28);
+}
+
+/* Clickable layer over the whole block; the iframe underneath never takes the pointer. */
+.blockLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.blockLink:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 3px;
+}
+
+.blockFrameViewport {
+  position: relative;
+  aspect-ratio: 1440 / 900;
+  overflow: clip;
+  background: #000000;
+}
+
+.blockFrameViewport img,
+.blockFrameViewport iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+}
+
+.blockFrameViewport img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+/* A recording rather than a page, so keep its middle in view. */
+.blockFrameViewport .blockFrameMedia {
+  object-position: center;
+}
+
+.blockFrameViewport iframe {
+  transform-origin: top left;
+  pointer-events: none;
+  background: transparent;
+}
+
+.block:hover::before,
+.block:focus-within::before,
+.block[data-revealed]::before {
+  opacity: 1;
+}
+
+.block:hover .blockFrame,
+.block:focus-within .blockFrame,
+.block[data-revealed] .blockFrame {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition-delay: 0.08s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blockFrame {
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s linear;
+  }
 }
 
 .block[data-block='1'] {
@@ -217,6 +324,7 @@
 
 .blockNumber {
   position: absolute;
+  z-index: 1;
   top: 12px;
   left: 14px;
   font-family: 'Space Mono', monospace;
@@ -271,9 +379,22 @@
   color: #6b6e66;
 }
 
+/* Phones: one block per row, big enough for the frame to read. */
 @media (max-width: 640px) {
   .blocks {
-    height: clamp(360px, 90vw, 440px);
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    height: auto;
+  }
+
+  .block[data-block] {
+    grid-column: auto;
+    grid-row: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .blockFrame {
+    --pad: 40px;
   }
 }
 

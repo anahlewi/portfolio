@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './App.module.css'
 import PixelBurst from './components/PixelBurst'
 
@@ -33,13 +33,58 @@ function ImageCycle({ images, interval = 5000 }) {
   )
 }
 
+// Live site rendered at desktop size, then scaled down to fit its frame.
+const SITE_WIDTH = 1440
+const SITE_HEIGHT = 900
+
+function SiteFrame({ url, poster, media }) {
+  const viewportRef = useRef(null)
+  const [scale, setScale] = useState(0)
+
+  useEffect(() => {
+    const el = viewportRef.current
+    const observer = new ResizeObserver(([entry]) => {
+      setScale(entry.contentRect.width / SITE_WIDTH)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div className={styles.blockFrame} aria-hidden="true">
+      <div className={styles.blockFrameBar}>
+        <i />
+        <i />
+        <i />
+      </div>
+      <div ref={viewportRef} className={styles.blockFrameViewport}>
+        {poster && <img src={poster} alt="" decoding="async" />}
+        {media ? (
+          <img src={media} alt="" loading="lazy" decoding="async" className={styles.blockFrameMedia} />
+        ) : (
+          <iframe
+            src={url}
+            title=""
+            tabIndex={-1}
+            loading="lazy"
+            width={SITE_WIDTH}
+            height={SITE_HEIGHT}
+            style={{ transform: `scale(${scale})` }}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
 const PROJECTS = [
   {
     title: 'Desktop Project',
     stack: 'React, React95',
     tag: 'React95',
     url: 'https://www.flaka.design/',
-    background: 'linear-gradient(135deg, #009999, #007a7a)',
+    background: 'black',
+    preview: '/previews/desktop.jpg',
     numberColor: '#ffffff',
   },
   {
@@ -47,7 +92,9 @@ const PROJECTS = [
     stack: 'p5.js, ml5.js',
     tag: 'p5.js',
     url: 'https://anahlewi.github.io/affirmations-webcam/',
-    background: 'linear-gradient(135deg, #ffb37a, #ff8a5c)',
+    background: 'black',
+    // The live site needs a webcam, so the frame shows a recording instead.
+    media: 'https://tyajqainwjvxmehbptzh.supabase.co/storage/v1/object/public/media/affirmations-webcam.gif',
     numberColor: '#ffffff',
   },
   {
@@ -55,16 +102,18 @@ const PROJECTS = [
     stack: 'React, Advice API, Bad Advice API',
     tag: 'terminal',
     url: 'https://anahlewi.github.io/anahesty-terminal/',
-    background: 'linear-gradient(135deg, #14170f, #2a2f20)',
-    numberColor: '#8fae5a',
+    background: 'black',
+    preview: '/previews/terminal.jpg',
+    numberColor: '#ffffff',
   },
   {
     title: 'Notes App Blog',
     stack: 'Supabase, React, TypeScript, FastAPI, Vercel',
     tag: 'Supabase, Vercel',
     url: 'https://work-in-progress-blog.vercel.app/',
-    background: 'linear-gradient(135deg, #f3ecd2, #e6dbab)',
-    numberColor: '#14170f',
+    background: 'black',
+    preview: '/previews/notes.jpg',
+    numberColor: '#ffffff',
   },
 ]
 
@@ -269,7 +318,30 @@ const HISTORY_ICONS = {
   ),
 }
 
+// Touch screens can't hover, so play each block's reveal as it scrolls into view.
+function useRevealOnScroll() {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!window.matchMedia('(hover: none)').matches) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.toggleAttribute('data-revealed', entry.isIntersecting)
+        })
+      },
+      { threshold: 0.6 }
+    )
+    ;[...ref.current.children].forEach((block) => observer.observe(block))
+    return () => observer.disconnect()
+  }, [])
+
+  return ref
+}
+
 export default function App() {
+  const blocksRef = useRevealOnScroll()
+
   return (
     <div className={styles.root}>
       <PixelBurst />
@@ -335,23 +407,28 @@ export default function App() {
 
       <section className={styles.portfolio}>
         <div className={styles.portfolioGrid}>
-          <div className={styles.blocks}>
+          <div ref={blocksRef} className={styles.blocks}>
             {PROJECTS.map((project, i) => (
-              <a
+              <div
                 key={project.url}
-                href={project.url}
-                target="_blank"
-                rel="noreferrer"
                 className={styles.block}
                 data-block={i + 1}
                 style={{ background: project.background }}
-                aria-label={`Open ${project.title} (opens in a new tab)`}
-                title={project.title}
               >
-                <span className={styles.blockNumber} style={{ color: project.numberColor }}>
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-              </a>
+                <SiteFrame url={project.url} poster={project.preview} media={project.media} />
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.blockLink}
+                  aria-label={`Open ${project.title} (opens in a new tab)`}
+                  title={project.title}
+                >
+                  <span className={styles.blockNumber} style={{ color: project.numberColor }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                </a>
+              </div>
             ))}
           </div>
 
